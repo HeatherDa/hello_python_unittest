@@ -45,23 +45,47 @@ class PhoneAssignments():
 
 
     def add_employee(self, employee):
-        # TODO raise exception if two employees with same ID are added
-        self.employees.append(employee)
+        #  raise exception if two employees with same ID are added
+        for em in self.employees:
+            if em.id==employee.id:
+                raise PhoneError('An employee with this ID has already been added to this list')
+
+        if employee in self.employees:
+            raise PhoneError('This employee has already been added')
+        else:
+            self.employees.append(employee)
 
 
     def add_phone(self, phone):
-        # TODO raise exception if two phones with same ID are added
-        self.phones.append(phone)
-
+        # raise exception if two phones with same ID are added
+        for p in self.phones:
+            if p.id==phone.id:
+                raise PhoneError ("This phone's id is already in use.")
+        if phone in self.phones:
+            print(phone,'\t:\t',self.phones)
+            raise PhoneError('This phone has already been added')
+        else:
+            self.phones.append(phone)
 
     def assign(self, phone_id, employee):
         # Find phone in phones list
-        # TODO if phone is already assigned to an employee, do not change list, raise exception
-        # TODO if employee already has a phone, do not change list, and raise exception
-        # TODO if employee already has this phone, don't make any changes. This should NOT raise an exception.
+        # if phone is already assigned to an employee, do not change list, raise exception
+        # if employee already has a phone, do not change list, and raise exception
+        # if employee already has this phone, don't make any changes. This should NOT raise an exception.
+
         for phone in self.phones:
             if phone.id == phone_id:
-                phone.assign(employee.id)
+                if (phone.is_assigned() == True) : #(this phone is assigned)
+                    if PhoneAssignments.phone_info(self,employee) is None: #no phone assigned to this employee, so this phone isn't assigned to them
+                        raise PhoneError ('This phone is already assigned to someone else.')
+                    elif (PhoneAssignments.phone_info(self,employee) is not None) & (PhoneAssignments.phone_info(self,employee).id != phone_id): #employee has a phone other than this one assigned
+                        raise PhoneError ('This employee already has a phone.')
+                    else: #this employee already has this phone assigned, so do nothing
+                        return
+                elif (PhoneAssignments.phone_info(self,employee) is not None) & (PhoneAssignments.phone_info(self,employee) != phone_id): #this phone isn't assigned to someone else, but this employee already has a phone
+                    raise PhoneError('This employee already has a phone assigned to them.')
+                else: #This phone isn't assigned to someone else, and this employee doesn't have a phone.
+                    phone.assign(employee.id)
                 return
 
 
@@ -74,16 +98,16 @@ class PhoneAssignments():
 
     def phone_info(self, employee):
         # find phone for employee in phones list
-
-        # TODO  should return None if the employee does not have a phone
-        # TODO  the method should raise an exception if the employee does not exist
-
-        for phone in self.phones:
-            if phone.employee_id == employee.id:
-                return phone
-
-
-        return None
+        #   should return None if the employee does not have a phone
+        #   the method should raise an exception if the employee does not exist
+        count=0
+        if employee not in self.employees:
+            raise PhoneError('This employee has not been added yet.')
+        else:
+            for phone in self.phones:
+                if phone.employee_id == employee.id: #should tell me if this phone is assigned to this employee
+                    return phone
+            return None #phone wasn't assigned to this employee, but the employee exists
 
 
 class PhoneError(Exception):
