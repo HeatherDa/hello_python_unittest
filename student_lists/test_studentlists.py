@@ -139,5 +139,3 @@ class TestStudentLists(TestCase):
         self.assertTrue(test_class.is_class_full())
 
 
-if __name__=='__main__':
-    unittest.main()
