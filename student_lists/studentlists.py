@@ -48,9 +48,6 @@ class ClassList:
         return None
 
 
-    ## TODO add a method called is_class_full.
-    # This should return True or False to indicate if the class is full.
-    ## TODO add a method called is_class_full.
     # This should return True or False to indicate if the class is full.
     def is_class_full(self):
         if len(self.class_list) == self.max_students:
@@ -90,8 +87,8 @@ def main():
         print('Attempt to remove student not enrolled')
 
     print(capstone)
-    print(capstone.is_enrolled('Bob'))    # True
-    print(capstone.is_enrolled('Flora'))  # False
+    print("Bob is enrolled: ",capstone.is_enrolled('Bob'))    # True
+    print("Flora is enrolled: ",capstone.is_enrolled('Flora'))  # False
 
     print('Anna is at position', capstone.index_of_student('Anna') ) ## 4
     print('Alex is at position', capstone.index_of_student('Alex') ) ## None
