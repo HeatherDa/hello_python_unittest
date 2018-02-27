@@ -11,7 +11,10 @@ def add_miles(vehicle, new_miles):
 
     if not vehicle:
         raise Exception('Provide a vehicle name')
-    if isinstance(new_miles, float) or new_miles < 0:
+    else:
+        vehicle = vehicle.upper()
+    #if isinstance(new_miles, float) or new_miles < 0:
+    if new_miles < 0:
         raise Exception('Provide a positive number for new miles')
 
     conn = sqlite3.connect(db_url)
@@ -23,14 +26,66 @@ def add_miles(vehicle, new_miles):
     conn.close()
 
 
+
+
+
+def search_vehicle(name):
+    conn = sqlite3.connect(db_url)
+    cursor = conn.cursor()
+    name = name.upper()
+    rows = cursor.execute('SELECT * FROM Miles WHERE vehicle = ? ', (name,))
+    cursor.row_factory=sqlite3.Row
+    if rows.rowcount == 0:
+        conn.close()
+        return None
+    else:
+        for r in rows:
+            miles = r['total_miles']
+            conn.close()
+            return miles
+
 def main():
     while True:
+        choice = input('1. update miles \n2. search for miles \n3. delete')
         vehicle = input('Enter vehicle name or enter to quit')
-        if not vehicle:
+        vehicle = vehicle.upper()
+        if len(vehicle)==0:
             break
-        miles = float(input('Enter new miles for %s' % vehicle)) ## TODO input validation
+        elif choice == '1':
+            miles = input('Enter new miles for %s' % vehicle)
 
-        add_miles(vehicle, miles)
+            if is_float(miles):
+                miles = float(miles)
+                add_miles(vehicle, miles)
+
+        elif choice == '2':
+            miles = search_vehicle(vehicle)
+            if miles == None:
+                print('This vehicle is not in the database')
+            else:
+                print(vehicle.upper() + ' has been driven ', miles, ' miles.')
+
+        elif choice == '3':
+            delete(vehicle)
+
+
+def delete(name):
+    conn = sqlite3.connect(db_url)
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM MILES WHERE vehicle = ?', (name,))
+    conn.commit()
+    conn.close()
+
+
+def is_float(n):
+    st = ''
+    for char in n:
+        if (char.isnumeric()) | (char == '.'):
+            st += char
+        else:
+            print('not a number')
+            return False
+    return True
 
 
 if __name__ == '__main__':

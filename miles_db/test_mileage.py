@@ -20,21 +20,21 @@ class TestMileageDB(TestCase):
 
     def test_add_new_vehicle(self):
         mileage.add_miles('Blue Car', 100)
-        expected = { 'Blue Car': 100 }
+        expected = { 'BLUE CAR': 100 }
         self.compare_db_to_expected(expected)
 
         mileage.add_miles('Green Car', 50)
-        expected['Green Car'] = 50
+        expected['GREEN CAR'] = 50
         self.compare_db_to_expected(expected)
 
 
     def test_increase_miles_for_vehicle(self):
         mileage.add_miles('Red Car', 100)
-        expected = { 'Red Car': 100 }
+        expected = { 'RED CAR': 100 }
         self.compare_db_to_expected(expected)
 
         mileage.add_miles('Red Car', 50)
-        expected['Red Car'] = 100 + 50
+        expected['RED CAR'] = 100 + 50
         self.compare_db_to_expected(expected)
 
 
@@ -51,6 +51,15 @@ class TestMileageDB(TestCase):
         with self.assertRaises(Exception):
             mileage.addMiles('Car', '12.def')
 
+    def test_is_float(self):
+        self.assertEqual(mileage.is_float('2.00'), True)
+        self.assertEqual(mileage.is_float('2'), True)
+        self.assertEqual(mileage.is_float('fgjk'), False) #why doesn't this work here, when it works in my program?
+
+    def test_search(self):
+        mileage.add_miles('Blue Car', 100) #this does not appear in the milage database after running this test
+        self.assertEqual(mileage.search_vehicle('BLUE CAR'), 100)
+        self.assertEqual(mileage.search_vehicle('GREEN CAR'), None)
 
     # This is not a test method, instead, it's used by the test methods
     def compare_db_to_expected(self, expected):
